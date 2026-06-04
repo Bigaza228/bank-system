@@ -21,7 +21,6 @@ protected:
 public:
     void show_all_deposit();
     void show_deposit(size_t &id_deposit);
-    void create_new_deposit();
-    void add_for_deposit(size_t &id_deposit);
+    void add_for_deposit(size_t &id_deposit, double &summ);
     void delete_deposit(size_t &id_deposit);
 };
