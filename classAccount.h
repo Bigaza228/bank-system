@@ -24,8 +24,9 @@ public:
     : login(login), password(password){};
 
     virtual ~Account() = default;
-    virtual void create_deposit() = 0;
+    virtual void create_deposit(std::string &name) = 0;
     
+    void get_info_account();
     void show_all_deposit();
     void show_deposit(size_t &id_deposit);
     void add_for_deposit(size_t &id_deposit, double &summ);
@@ -36,7 +37,7 @@ public:
 class VIPAccount : public Account{
 public:
     VIPAccount(std::string login, std::string password) : Account(login, password){};
-    void create_deposit(std::string &name){
+    void create_deposit(std::string &name) override {
         deposits.push_back(Variable_Deposit(id_new_dep, name));
         ++id_new_dep, ++SIZEdeposit;
         std::cout << "Deposit " << name << " , was successfully created\n";
@@ -46,7 +47,7 @@ public:
 class DefaultAccount : public Account{
 public:
     DefaultAccount(std::string login, std::string password) : Account(login, password){};
-    void create_deposit(std::string &name){
+    void create_deposit(std::string &name) override {
         if(SIZEdeposit <= 3){
         deposits.push_back(Variable_Deposit(id_new_dep, name));
         ++id_new_dep, ++SIZEdeposit;

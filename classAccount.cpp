@@ -1,5 +1,15 @@
 #include "classAccount.h"
 
+void Account::get_info_account()
+{
+    std::cout << "Login: " << login << std::endl;
+    std::cout << "Password: " << password << std::endl;
+    std::cout << "number of deposits: " << SIZEdeposit << std::endl;
+    std::cout << std::endl << "Deposits: " << std::endl;
+    show_all_deposit();
+    std::cout << std::endl;
+}
+
 void Account::show_all_deposit()
 {
     for(const auto &i : deposits){
