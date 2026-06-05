@@ -11,21 +11,15 @@ private:
     std::map<std::string, std::unique_ptr<Account>> newaccountDatabase;
     bool deleted = false;
     
-    class interfaceprogram{
-    private:
-        
-        
-    public:
-        
-    };
+
 public:
     ControllCenter();
     ~ControllCenter();
-    void addAccount();
-    void deleteAccount();
+    void addAccount(const std::string &login, const std::string &password, const std::string &status);
+    void deleteAccount(const std::string &login, const std::string &password);
     void showAccounts(); //for admin
-    void loginAccount();
-    void adminmenu();    
+    void loginAccount(const std::string &login, const std::string &password);
+    void interfaceprogram(auto &it_account);
+    void adminmenu();    //for admin
 };
 
-VIPAccount gay("qwe","123");

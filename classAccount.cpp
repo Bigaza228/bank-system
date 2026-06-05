@@ -83,3 +83,25 @@ void Account::delete_deposit(size_t &id_deposit)
         }
     }
 }
+
+bool Account::checkmoney()
+{
+    if(deposits[0].cash_account > 0){
+        return true;
+    } else return false;
+}
+
+void DefaultAccount::create_deposit(std::string &name){
+    if(SIZEdeposit <= 3){
+    deposits.push_back(Variable_Deposit(id_new_dep, name));
+    ++id_new_dep, ++SIZEdeposit;
+    std::cout << "Deposit " << name << " , was successfully created\n";
+    
+    } else std::cout << "You have exceeded your deposit limit.\n";
+}
+
+void VIPAccount::create_deposit(std::string &name){
+    deposits.push_back(Variable_Deposit(id_new_dep, name));
+    ++id_new_dep, ++SIZEdeposit;
+    std::cout << "Deposit " << name << " , was successfully created\n";
+}

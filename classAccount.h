@@ -32,27 +32,17 @@ public:
     void add_for_deposit(size_t &id_deposit, double &summ);
     void delete_for_deposit(size_t &id_deposit, double &summ);
     void delete_deposit(size_t &id_deposit);
+    bool checkmoney();
 };
 
 class VIPAccount : public Account{
 public:
     VIPAccount(std::string login, std::string password) : Account(login, password){};
-    void create_deposit(std::string &name) override {
-        deposits.push_back(Variable_Deposit(id_new_dep, name));
-        ++id_new_dep, ++SIZEdeposit;
-        std::cout << "Deposit " << name << " , was successfully created\n";
-    }
+    void create_deposit(std::string &name) override;
 };
 
 class DefaultAccount : public Account{
 public:
     DefaultAccount(std::string login, std::string password) : Account(login, password){};
-    void create_deposit(std::string &name) override {
-        if(SIZEdeposit <= 3){
-        deposits.push_back(Variable_Deposit(id_new_dep, name));
-        ++id_new_dep, ++SIZEdeposit;
-        std::cout << "Deposit " << name << " , was successfully created\n";
-        
-        } else std::cout << "You have exceeded your deposit limit.\n";
-    }
+    void create_deposit(std::string &name) override;
 };
