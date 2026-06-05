@@ -10,7 +10,7 @@ void Account::show_all_deposit()
 
 void Account::show_deposit(size_t &id_deposit)
 {
-    const auto &it = std::find_if(deposits.begin(), deposits.end(),
+    const auto it = std::find_if(deposits.begin(), deposits.end(),
     [id_deposit](Variable_Deposit i_dep){
         return i_dep.id == id_deposit;
     });
@@ -24,7 +24,7 @@ void Account::show_deposit(size_t &id_deposit)
 
 void Account::add_for_deposit(size_t &id_deposit, double &summ)
 {
-    const auto &it = std::find_if(deposits.begin(), deposits.end(),
+    auto it = std::find_if(deposits.begin(), deposits.end(),
     [id_deposit](Variable_Deposit i_dep){
         return i_dep.id == id_deposit;
     });
@@ -34,9 +34,24 @@ void Account::add_for_deposit(size_t &id_deposit, double &summ)
     } else std::cout << "Id not found\n";
 }
 
+void Account::delete_for_deposit(size_t &id_deposit, double &summ)
+{
+    auto it = std::find_if(deposits.begin(), deposits.end(),
+    [id_deposit](Variable_Deposit i_dep){
+        return i_dep.id == id_deposit;
+    });
+
+    if(it != deposits.end()){
+        if(it->cash_account > summ){
+            it->cash_account -= summ;
+        } else std::cout << "Insufficient funds in the account\n";
+
+    } else std::cout << "Id not found\n";
+}
+
 void Account::delete_deposit(size_t &id_deposit)
 {
-    const auto &it = std::find_if(deposits.begin(), deposits.end(),
+    auto it = std::find_if(deposits.begin(), deposits.end(),
     [id_deposit](Variable_Deposit i_dep){
         return i_dep.id == id_deposit;
     });
@@ -49,6 +64,7 @@ void Account::delete_deposit(size_t &id_deposit)
             if(it != deposits.begin()){
                 deposits[0].cash_account += it->cash_account;
                 deposits.erase(it);
+                return;
             }
             if(it != deposits.begin() + 1){
                 deposits[1].cash_account += it->cash_account;
