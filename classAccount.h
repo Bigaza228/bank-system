@@ -35,6 +35,7 @@ public:
 
 class VIPAccount : public Account{
 public:
+    VIPAccount(std::string login, std::string password) : Account(login, password){};
     void create_deposit(std::string &name){
         deposits.push_back(Variable_Deposit(id_new_dep, name));
         ++id_new_dep, ++SIZEdeposit;
@@ -44,6 +45,7 @@ public:
 
 class DefaultAccount : public Account{
 public:
+    DefaultAccount(std::string login, std::string password) : Account(login, password){};
     void create_deposit(std::string &name){
         if(SIZEdeposit <= 3){
         deposits.push_back(Variable_Deposit(id_new_dep, name));
