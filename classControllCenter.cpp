@@ -34,6 +34,14 @@ void ControllCenter::deleteAccount(const std::string &login, const std::string &
             deleted = true;
         }
         if(itforDBALL->second->checkmoney()){
+            if(itforDBALL->second->checkblocked()){
+                accountDatabase.erase(itforDBALL);
+                if(itfornew != newaccountDatabase.end()){
+                    newaccountDatabase.erase(itfornew);
+                }
+                std::cout << "Account successfully deleted.\n";
+                return;
+            }
             std::cout << "The account cannot be deleted because it holds funds.\n";
         } else {
             accountDatabase.erase(itforDBALL);
@@ -59,6 +67,9 @@ void ControllCenter::loginAccount(const std::string &login, const std::string &p
     auto itforDBALL = accountDatabase.find(login);
     if(itforDBALL != accountDatabase.cend()){
         if(itforDBALL->second->checkpassword(password)){
+            if(itforDBALL->second->checkblocked()){
+                std::cout << "Your account has been blocked; you cannot access it.\n";
+            }
             std::cout << "You have successfully logged into your account.\n";
             return interfaceprogram(itforDBALL->second);
         } else {
@@ -138,5 +149,42 @@ void ControllCenter::interfaceprogram(std::unique_ptr<Account> &it_account)
 
 void ControllCenter::adminmenu()
 {
+    std::string request, arg1,arg2;
+    while (true)
+    {
+        request.clear();
+        arg1.clear();
+        arg2.clear();
+        std::cout << "1. to withdraw all users\n";
+        std::cout << "2. login in account: Enter 2 \"login\"\n";
+        std::cout << "3. block account: Enter 2 \"login\"\n";
+        std::cout << "4. logout\n";
 
+        std::getline(std::cin, request);
+        std::stringstream ss(request);
+        ss >> arg1 >> arg2;
+
+        if(arg1 == "1"){
+
+        } else if(arg1 == "2" && !arg2.empty()){
+            auto it = accountDatabase.find(arg2);
+            if(it != accountDatabase.end()){
+                std::cout << "You have successfully logged into your account - " << arg2 << std::endl;
+                return interfaceprogram(it->second);
+            } else {
+                std::cout << "Account not found\n";
+            }
+        } else if(arg1 == "3" && !arg2.empty()){
+            auto it = accountDatabase.find(arg2);
+            if(it != accountDatabase.end()){
+                it->second->blockptr() = true;
+                std::cout << "Account - " << arg2 << " , has blocked\n";
+            } else {
+                std::cout << "Account not found\n";
+            }
+        } else if(arg1 == "4"){
+            std::cout << "Admin menu closed.\n";
+            return;
+        }
+    }
 }

@@ -98,6 +98,11 @@ bool Account::checkpassword(std::string input_password)
     return password == input_password;
 }
 
+bool Account::checkblocked()
+{
+    return blocked == true;
+}
+
 void DefaultAccount::create_deposit(std::string &name){
     if(SIZEdeposit <= 3){
     deposits.push_back(Variable_Deposit(id_new_dep, name));

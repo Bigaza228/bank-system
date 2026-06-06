@@ -21,6 +21,7 @@ protected:
     std::string login, password;
     size_t SIZEdeposit = 0, id_new_dep = 1;
     std::vector<Variable_Deposit> deposits;
+    bool blocked = false;
 public:
     Account(std::string login, std::string password) 
     : login(login), password(password){};
@@ -36,6 +37,8 @@ public:
     void delete_deposit(size_t &id_deposit);
     bool checkmoney();
     bool checkpassword(std::string input_password);
+    bool checkblocked();
+    bool& blockptr(){return blocked;}
 };
 
 class VIPAccount : public Account{
