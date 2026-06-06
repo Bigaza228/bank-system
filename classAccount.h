@@ -1,5 +1,7 @@
 #pragma once 
 #include<iostream>
+#include<sstream>
+#include<fstream>
 #include<string>
 #include<algorithm>
 #include<map>
@@ -33,6 +35,7 @@ public:
     void delete_for_deposit(size_t &id_deposit, double &summ);
     void delete_deposit(size_t &id_deposit);
     bool checkmoney();
+    bool checkpassword(std::string input_password);
 };
 
 class VIPAccount : public Account{

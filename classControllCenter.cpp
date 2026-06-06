@@ -29,7 +29,8 @@ void ControllCenter::deleteAccount(const std::string &login, const std::string &
     auto itfornew = newaccountDatabase.find(login);
 
     if(itforDBALL != accountDatabase.end()){
-        if(itforDBALL != itfornew){
+        // itfornew is an iterator into a different container; only check membership
+        if(itfornew != newaccountDatabase.end()){
             deleted = true;
         }
         if(itforDBALL->second->checkmoney()){
@@ -55,12 +56,63 @@ void ControllCenter::showAccounts()
 
 void ControllCenter::loginAccount(const std::string &login, const std::string &password)
 {
-
+    auto itforDBALL = accountDatabase.find(login);
+    if(itforDBALL != accountDatabase.cend()){
+        if(itforDBALL->second->checkpassword(password)){
+            std::cout << "You have successfully logged into your account.\n";
+            return interfaceprogram(itforDBALL->second);
+        } else {
+            std::cout << "The password is incorrect.\n";
+        }
+    } else {
+        std::cout << "login not found\n";
+    }
 }
 
-void ControllCenter::interfaceprogram(auto &it_account)
+void ControllCenter::interfaceprogram(std::unique_ptr<Account> &it_account)
 {
+    std::string request, arg1,arg2,arg3;
+    while (true)
+    {
+        request.clear();
+        arg1.clear();
+        arg2.clear();
+        arg3.clear();
+        clearinterface();
+        std::cout << "1. View account information\n";
+        std::cout << "2. Show all deposits\n";
+        std::cout << "3. View specific deposit: Enter 3 \"id_deposit\"\n";
+        std::cout << "4. Create new deposit: Enter 4 \"name\"\n";
+        std::cout << "5. Add money to deposit: Enter 5 \"id_deposit\" \"summa\"\n";
+        std::cout << "6. Withdraw money from deposit: Enter 6 \"id_deposit\" \"summa\"\n";
+        std::cout << "7. Delete deposit: Enter 7 \"id_deposit\"\n";
+        std::cout << "0. Logout\n";
+        std::cout << "\n==========================================\n";
+        std::cout << "Enter your choice: ";
+        std::getline(std::cin, request);
+        std::stringstream ss(request);
+        ss >> arg1 >> arg2 >> arg3;
 
+        if(arg1 == "1"){
+
+        } else if(arg1 == "2"){
+
+        } else if(arg1 == "3" && !arg2.empty()){
+
+        } else if(arg1 == "4" && !arg2.empty()){
+
+        } else if(arg1 == "5" && !arg2.empty() && !arg3.empty()){
+
+        } else if(arg1 == "6" && !arg2.empty() && !arg3.empty()){
+
+        } else if(arg1 == "7" && !arg2.empty()){
+
+        } else if(arg1 == "0"){
+            std::cout << "You have logged out of your account.\n";
+            return;
+        }
+    }
+    
 }
 
 void ControllCenter::adminmenu()
