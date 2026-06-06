@@ -74,11 +74,13 @@ void Account::delete_deposit(size_t &id_deposit)
             if(it != deposits.begin()){
                 deposits[0].cash_account += it->cash_account;
                 deposits.erase(it);
+                --SIZEdeposit;
                 return;
             }
             if(it != deposits.begin() + 1){
                 deposits[1].cash_account += it->cash_account;
                 deposits.erase(it);
+                --SIZEdeposit, --id_new_dep;
             }
         }
     }

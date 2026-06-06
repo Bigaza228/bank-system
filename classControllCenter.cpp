@@ -94,25 +94,46 @@ void ControllCenter::interfaceprogram(std::unique_ptr<Account> &it_account)
         ss >> arg1 >> arg2 >> arg3;
 
         if(arg1 == "1"){
-
+            it_account->get_info_account();
         } else if(arg1 == "2"){
-
+            it_account->show_all_deposit();
         } else if(arg1 == "3" && !arg2.empty()){
-
+            try{
+                size_t id_dep = std::stoi(arg2);
+                it_account->show_deposit(id_dep);
+            } catch(...){
+                std::cout << "It didn't work; please enter it again.\n";
+            }
         } else if(arg1 == "4" && !arg2.empty()){
-
+            it_account->create_deposit(arg2);
         } else if(arg1 == "5" && !arg2.empty() && !arg3.empty()){
-
+            try{
+                size_t id_dep = std::stoi(arg2);
+                double summ = std::stoi(arg3);
+                it_account->add_for_deposit(id_dep, summ);
+            } catch(...){
+                std::cout << "It didn't work; please enter it again.\n";
+            }
         } else if(arg1 == "6" && !arg2.empty() && !arg3.empty()){
-
+            try{
+                size_t id_dep = std::stoi(arg2);
+                double summ = std::stoi(arg3);
+                it_account->delete_for_deposit(id_dep, summ);
+            } catch(...){
+                std::cout << "It didn't work; please enter it again.\n";
+            }
         } else if(arg1 == "7" && !arg2.empty()){
-
+            try{
+                size_t id_dep = std::stoi(arg2);
+                it_account->delete_deposit(id_dep);
+            } catch(...){
+                std::cout << "It didn't work; please enter it again.\n";
+            }
         } else if(arg1 == "0"){
             std::cout << "You have logged out of your account.\n";
             return;
         }
     }
-    
 }
 
 void ControllCenter::adminmenu()
