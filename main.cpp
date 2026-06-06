@@ -1,6 +1,20 @@
 #include "classControllCenter.h"
 
 
+
+
+bool checkLogOrPas(std::string &arg){
+    for(size_t i = 0; i < arg.size(); ++i){
+        if(i > 7) return false;
+        if(arg[i] == ' ' || std::tolower(arg[i]) < 'a' || std::tolower(arg[i]) > 'z'){
+            return false;
+        }
+    }
+    return true;
+}
+
+
+
 int main(){
     std::string request, arg1,arg2,arg3;
     ControllCenter controllbase;
@@ -20,6 +34,12 @@ int main(){
         ss >> arg1 >> arg2 >> arg3;
 
         if((arg1 == "1" || arg1 == "1vip") && !arg2.empty() && !arg3.empty()){
+            if(!checkLogOrPas(arg2) && !checkLogOrPas(arg3)){
+                std::cout << "Your username or password does not meet the standards.\n";
+                std::cout << "use up to 8 characters inclusive, and do not use characters\n";
+                std::cout << "Try again.\n";
+                continue;
+            }
             if(arg1 == "1vip"){
                 controllbase.addAccount(arg2, arg3, "vip");
             } else {
