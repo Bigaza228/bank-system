@@ -188,7 +188,7 @@ void VIPAccount::create_deposit(std::string &name){
 void clearinterface(){
 #if defined(__APPLE__) || defined(__linux__)
     std::system("clear");
-#elif defined(__WIN32)
+#elif defined(_WIN32)
     std::system("cls");
 #endif
 }
@@ -274,6 +274,7 @@ void ControllCenter::loginAccount(const std::string &login, const std::string &p
         if(itforDBALL->second->checkpassword(password)){
             if(itforDBALL->second->checkblocked()){
                 std::cout << "Your account has been blocked; you cannot access it.\n";
+                return;
             }
             std::cout << "You have successfully logged into your account.\n";
             return interfaceprogram(itforDBALL->second);
@@ -325,7 +326,7 @@ void ControllCenter::interfaceprogram(std::unique_ptr<Account> &it_account)
         } else if(arg1 == "5" && !arg2.empty() && !arg3.empty()){
             try{
                 size_t id_dep = std::stoi(arg2);
-                double summ = std::stoi(arg3);
+                double summ = std::stod(arg3);
                 it_account->add_for_deposit(id_dep, summ);
             } catch(...){
                 std::cout << "It didn't work; please enter it again.\n";
@@ -333,7 +334,7 @@ void ControllCenter::interfaceprogram(std::unique_ptr<Account> &it_account)
         } else if(arg1 == "6" && !arg2.empty() && !arg3.empty()){
             try{
                 size_t id_dep = std::stoi(arg2);
-                double summ = std::stoi(arg3);
+                double summ = std::stod(arg3);
                 it_account->delete_for_deposit(id_dep, summ);
             } catch(...){
                 std::cout << "It didn't work; please enter it again.\n";
@@ -362,7 +363,7 @@ void ControllCenter::adminmenu()
         arg2.clear();
         std::cout << "1. to withdraw all users\n";
         std::cout << "2. login in account: Enter 2 \"login\"\n";
-        std::cout << "3. block account: Enter 2 \"login\"\n";
+        std::cout << "3. block account: Enter 3 \"login\"\n";
         std::cout << "4. logout\n";
 
         std::getline(std::cin, request);
@@ -370,7 +371,7 @@ void ControllCenter::adminmenu()
         ss >> arg1 >> arg2;
 
         if(arg1 == "1"){
-
+            showAccounts();
         } else if(arg1 == "2" && !arg2.empty()){
             auto it = accountDatabase.find(arg2);
             if(it != accountDatabase.end()){
