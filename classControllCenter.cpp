@@ -26,34 +26,25 @@ void ControllCenter::addAccount(const std::string &login, const std::string &pas
 void ControllCenter::deleteAccount(const std::string &login, const std::string &password)
 {
     auto itforDBALL = accountDatabase.find(login);
-    auto itfornew = newaccountDatabase.find(login);
 
     if(itforDBALL != accountDatabase.end()){
-        // itfornew is an iterator into a different container; only check membership
-        if(itfornew != newaccountDatabase.end()){
-            deleted = true;
+        // Проверяем пароль перед удалением, чтобы чужой человек не удалил аккаунт
+        if(!itforDBALL->second->checkpassword(password)) {
+            std::cout << "Incorrect password for deletion.\n";
+            return;
         }
+
         if(itforDBALL->second->checkmoney()){
-            if(itforDBALL->second->checkblocked()){
-                accountDatabase.erase(itforDBALL);
-                if(itfornew != newaccountDatabase.end()){
-                    newaccountDatabase.erase(itfornew);
-                }
-                std::cout << "Account successfully deleted.\n";
-                return;
-            }
             std::cout << "The account cannot be deleted because it holds funds.\n";
         } else {
             accountDatabase.erase(itforDBALL);
-            if(itfornew != newaccountDatabase.end()){
-                newaccountDatabase.erase(itfornew);
-            }
             std::cout << "Account successfully deleted.\n";
         }
     } else {
         std::cout << "That account does not exist.\n";
     }
 }
+
 
 void ControllCenter::showAccounts()
 {

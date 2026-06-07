@@ -52,7 +52,7 @@ void Account::delete_for_deposit(size_t &id_deposit, double &summ)
     });
 
     if(it != deposits.end()){
-        if(it->cash_account > summ){
+        if(it->cash_account >= summ){
             it->cash_account -= summ;
         } else std::cout << "Insufficient funds in the account\n";
 
@@ -61,33 +61,43 @@ void Account::delete_for_deposit(size_t &id_deposit, double &summ)
 
 void Account::delete_deposit(size_t &id_deposit)
 {
+    // 1. Ищем депозит в векторе
     auto it = std::find_if(deposits.begin(), deposits.end(),
     [id_deposit](Variable_Deposit i_dep){
         return i_dep.id == id_deposit;
     });
 
-    if(it != deposits.end()){
-        if(SIZEdeposit == 1 && it->cash_account > 0){
-            std::cout << "You can't delete a deposit if it's the only one and there's money in it.\n";
-            
-        } else {
-            if(it != deposits.begin()){
-                deposits[0].cash_account += it->cash_account;
-                deposits.erase(it);
-                --SIZEdeposit;
-                return;
-            }
-            if(it != deposits.begin() + 1){
-                deposits[1].cash_account += it->cash_account;
-                deposits.erase(it);
-                --SIZEdeposit, --id_new_dep;
-            }
-        }
+    // 2. Если депозит вообще не найден, сразу выходим
+    if(it == deposits.end()){
+        std::cout << "Id not found\n";
+        return;
+    }
+
+    // 3. Если это единственный депозит и там есть деньги — запрещаем удаление
+    if(deposits.size() == 1 && it->cash_account > 0){
+        std::cout << "You can't delete a deposit if it's the only one and there's money in it.\n";
+        return;
+    }
+
+    // 4. ЗАПОМИНАЕМ деньги удаляемого депозита, пока итератор жив
+    double cash_to_transfer = it->cash_account;
+
+    // 5. УДАЛЯЕМ депозит. После этой строки итератор 'it' ПЕРЕСТАЕТ СУЩЕСТВОВАТЬ!
+    deposits.erase(it);
+    if(SIZEdeposit > 0) --SIZEdeposit;
+
+    // 6. ЕСЛИ были деньги и у пользователя ОСТАЛИСЬ другие депозиты — переносим средства
+    if(cash_to_transfer > 0 && !deposits.empty()) {
+        deposits[0].cash_account += cash_to_transfer;
+        std::cout << "Remaining funds transferred to deposit ID: " << deposits[0].id << "\n";
     }
 }
 
+
 bool Account::checkmoney()
 {
+    if(deposits.empty()) return false;
+
     if(deposits[0].cash_account > 0){
         return true;
     } else return false;
@@ -104,7 +114,7 @@ bool Account::checkblocked()
 }
 
 void DefaultAccount::create_deposit(std::string &name){
-    if(SIZEdeposit <= 3){
+    if(SIZEdeposit < 3){
     deposits.push_back(Variable_Deposit(id_new_dep, name));
     ++id_new_dep, ++SIZEdeposit;
     std::cout << "Deposit " << name << " , was successfully created\n";
