@@ -38,6 +38,8 @@ public:
     bool checkpassword(std::string input_password);
     bool checkblocked();
     bool& blockptr(){return blocked;}
+    bool show_id_deposits();
+    std::string& getlogin(){return login;}
 };
 
 class VIPAccount : public Account{
@@ -113,32 +115,26 @@ void Account::delete_for_deposit(size_t &id_deposit, double &summ)
 
 void Account::delete_deposit(size_t &id_deposit)
 {
-    // 1. Ищем депозит в векторе
     auto it = std::find_if(deposits.begin(), deposits.end(),
     [id_deposit](Variable_Deposit i_dep){
         return i_dep.id == id_deposit;
     });
 
-    // 2. Если депозит вообще не найден, сразу выходим
     if(it == deposits.end()){
         std::cout << "Id not found\n";
         return;
     }
 
-    // 3. Если это единственный депозит и там есть деньги — запрещаем удаление
     if(deposits.size() == 1 && it->cash_account > 0){
         std::cout << "You can't delete a deposit if it's the only one and there's money in it.\n";
         return;
     }
 
-    // 4. ЗАПОМИНАЕМ деньги удаляемого депозита, пока итератор жив
     double cash_to_transfer = it->cash_account;
 
-    // 5. УДАЛЯЕМ депозит. После этой строки итератор 'it' ПЕРЕСТАЕТ СУЩЕСТВОВАТЬ!
     deposits.erase(it);
     if(SIZEdeposit > 0) --SIZEdeposit;
 
-    // 6. ЕСЛИ были деньги и у пользователя ОСТАЛИСЬ другие депозиты — переносим средства
     if(cash_to_transfer > 0 && !deposits.empty()) {
         deposits[0].cash_account += cash_to_transfer;
         std::cout << "Remaining funds transferred to deposit ID: " << deposits[0].id << "\n";
@@ -209,6 +205,7 @@ public:
     void loginAccount(const std::string &login, const std::string &password);
     void interfaceprogram(std::unique_ptr<Account> &it_account);
     void adminmenu();    //for admin
+    void moneytransfer(std::unique_ptr<Account> &it_account1, std::unique_ptr<Account> &it_account2);
 };
 
 
@@ -303,6 +300,7 @@ void ControllCenter::interfaceprogram(std::unique_ptr<Account> &it_account)
         std::cout << "5. Add money to deposit: Enter 5 \"id_deposit\" \"summa\"\n";
         std::cout << "6. Withdraw money from deposit: Enter 6 \"id_deposit\" \"summa\"\n";
         std::cout << "7. Delete deposit: Enter 7 \"id_deposit\"\n";
+        std::cout << "8. Transfer money to another account: Enter 8 \"login_account1\" \"login_account2\"\n";
         std::cout << "0. Logout\n";
         std::cout << "\n==========================================\n";
         std::cout << "Enter your choice: ";
@@ -345,6 +343,15 @@ void ControllCenter::interfaceprogram(std::unique_ptr<Account> &it_account)
                 it_account->delete_deposit(id_dep);
             } catch(...){
                 std::cout << "It didn't work; please enter it again.\n";
+            }
+        } else if(arg1 == "8" && !arg2.empty() && !arg3.empty()){
+            if(arg2 == it_account->getlogin()){
+                auto it_account2 = accountDatabase.find(arg3);
+                if(it_account2 != accountDatabase.cend()){
+                    ControllCenter::moneytransfer(it_account, it_account2->second);
+                } else {
+                    std::cout << "login account 2 not found\n";
+                }
             }
         } else if(arg1 == "0"){
             std::cout << "You have logged out of your account.\n";
@@ -395,7 +402,6 @@ void ControllCenter::adminmenu()
     }
 }
 
-
 bool checkLogOrPas(std::string &arg){
     for(size_t i = 0; i < arg.size(); ++i){
         if(i > 7) return false;
@@ -419,7 +425,6 @@ int main(){
         arg1.clear();
         arg2.clear();
         arg3.clear();
-        clearinterface();
 
 
         std::cout << "Enter your choice: ";
@@ -456,4 +461,52 @@ int main(){
         }
     }
     return 0;
+}
+
+void ControllCenter::moneytransfer(std::unique_ptr<Account> &it_account1, std::unique_ptr<Account> &it_account2)
+{
+    if(!it_account1->checkmoney()){
+        std::cout << "you have no deposits\n";
+        return;
+    }
+    if(!it_account2->checkmoney()){
+        std::cout << "the user has no deposits\n";
+        return;
+    }
+
+    std::cout << "From which deposit do you want to transfer money?\n";
+    it_account1->show_all_deposit();
+    std::cin.ignore();
+    size_t id_account1;
+    std::cin >> id_account1;
+
+    std::cout << "Which deposit do you want to transfer money to?\n";
+    it_account2->show_id_deposits();
+    size_t id_account2;
+    std::cin >> id_account2;
+
+    std::cout << "How much do you want to transfer?: ";
+    double sizetransfer;
+    std::cin >> sizetransfer;
+    
+
+    try{
+        it_account1->delete_for_deposit(id_account1, sizetransfer);
+        it_account2->add_for_deposit(id_account2, sizetransfer);
+    } catch(...){
+        std::cout << "Error\n" << std::endl;
+    }
+}
+
+bool Account::show_id_deposits()
+{
+    if(deposits.empty()){
+        std::cout << "no deposits\n";
+        return false;
+    }
+    for(auto &i : deposits){
+        std::cout << i.id << " ";
+    }
+    std::cout << std::endl;
+    return true;
 }
